@@ -1,0 +1,53 @@
+[theme]
+primaryColor = "#1f77b4"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f0f2f6"
+textColor = "#262730"
+font = "sans serif"
+
+[server]
+headless = true
+enableCORS = false
+
+[browser]
+gatherUsageStats = false
+```
+
+---
+
+### **PASO 4: Guardar el archivo**
+
+1. Baja hasta abajo
+2. En "Commit new file" escribe: `Agregar configuración de tema claro`
+3. Haz clic en **"Commit new file"** (botón verde)
+
+---
+
+### **PASO 5: Reiniciar la aplicación en Streamlit**
+
+1. Ve a tu aplicación en Streamlit (donde está funcionando)
+2. Haz clic en **"Manage app"** (abajo a la derecha, botón rojo)
+3. Haz clic en **"Reboot"**
+4. Espera 1-2 minutos
+
+---
+
+## ✅ **Resultado**
+
+Después de reiniciar, tu aplicación siempre se abrirá con:
+- ✅ Fondo blanco
+- ✅ Texto oscuro
+- ✅ Tema claro por defecto
+
+---
+
+## 📁 **Estructura final de archivos**
+
+Tu repositorio quedará así:
+```
+dca-cuyes-analisis/
+├── .streamlit/
+│   └── config.toml       ← NUEVO
+├── app.py
+├── requirements.txt
+└── README.md
