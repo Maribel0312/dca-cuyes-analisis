@@ -1115,18 +1115,16 @@ elif seccion == "📚 Teoría":
     
     st.latex(r"Y_{ij} = \mu + \tau_i + \varepsilon_{ij}")
     
-    st.markdown("""
-    **Donde:**
-    - $Y_{ij}$ = Observación j-ésima del tratamiento i-ésimo
-    - $\mu$ = Media general poblacional
-    - $\tau_i$ = Efecto del i-ésimo tratamiento ($i = 1, 2, ..., t$)
-    - $\varepsilon_{ij}$ = Error aleatorio ($j = 1, 2, ..., n_i$)
-    
-    **Supuestos:**
-    - $\varepsilon_{ij} \sim N(0, \sigma^2)$ (normalidad)
-    - $Var(\varepsilon_{ij}) = \sigma^2$ (homocedasticidad)
-    - Errores independientes
-    """)
+    st.markdown("**Donde:**")
+    st.markdown("- $Y_{ij}$ = Observación j-ésima del tratamiento i-ésimo")
+    st.markdown("- $\\mu$ = Media general poblacional")
+    st.markdown("- $\\tau_i$ = Efecto del i-ésimo tratamiento $(i = 1, 2, ..., t)$")
+    st.markdown("- $\\varepsilon_{ij}$ = Error aleatorio $(j = 1, 2, ..., n_i)$")
+    st.markdown("")
+    st.markdown("**Supuestos:**")
+    st.markdown("- $\\varepsilon_{ij} \\sim N(0, \\sigma^2)$ (normalidad)")
+    st.markdown("- $Var(\\varepsilon_{ij}) = \\sigma^2$ (homocedasticidad)")
+    st.markdown("- Errores independientes")
     
     st.markdown("### Hipótesis Estadísticas")
     
@@ -1193,10 +1191,8 @@ elif seccion == "📚 Teoría":
     st.caption(r"Bajo $H_0$: $F_{calc} \sim F_{(t-1, N-t)}$")
     
     st.markdown("#### 8. Regla de Decisión")
-    st.markdown(r"""
-    - Si $F_{calc} > F_{crítico}$ o $p\text{-valor} < \alpha$: Rechazar $H_0$
-    - Si $F_{calc} \leq F_{crítico}$ o $p\text{-valor} \geq \alpha$: No rechazar $H_0$
-    """)
+    st.markdown("- Si $F_{calc} > F_{crítico}$ o $p\\text{-valor} < \\alpha$: Rechazar $H_0$")
+    st.markdown("- Si $F_{calc} \\leq F_{crítico}$ o $p\\text{-valor} \\geq \\alpha$: No rechazar $H_0$")
     
     # ANOVA BIFACTORIAL
     st.markdown("---")
@@ -1210,15 +1206,13 @@ elif seccion == "📚 Teoría":
     
     st.latex(r"Y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \varepsilon_{ijk}")
     
-    st.markdown("""
-    **Donde:**
-    - $Y_{ijk}$ = Observación k en el nivel i del Factor A y nivel j del Factor B
-    - $\mu$ = Media general
-    - $\alpha_i$ = Efecto del nivel i del Factor A
-    - $\beta_j$ = Efecto del nivel j del Factor B
-    - $(\alpha\beta)_{ij}$ = Efecto de interacción entre factores
-    - $\varepsilon_{ijk}$ = Error aleatorio
-    """)
+    st.markdown("**Donde:**")
+    st.markdown("- $Y_{ijk}$ = Observación k en el nivel i del Factor A y nivel j del Factor B")
+    st.markdown("- $\\mu$ = Media general")
+    st.markdown("- $\\alpha_i$ = Efecto del nivel i del Factor A")
+    st.markdown("- $\\beta_j$ = Efecto del nivel j del Factor B")
+    st.markdown("- $(\\alpha\\beta)_{ij}$ = Efecto de interacción entre factores")
+    st.markdown("- $\\varepsilon_{ijk}$ = Error aleatorio")
     
     st.markdown("### Hipótesis a Evaluar")
     
@@ -1303,16 +1297,14 @@ elif seccion == "📚 Teoría":
     
     st.latex(r"Y_{ijk} = \mu + \tau_i + \beta_{j(i)} + \varepsilon_{ijk}")
     
-    st.markdown("""
-    **Donde:**
-    - $Y_{ijk}$ = Observación k en la subunidad j del tratamiento i
-    - $\mu$ = Media general poblacional
-    - $\tau_i$ = Efecto del tratamiento i ($i = 1, 2, ..., t$)
-    - $\beta_{j(i)}$ = Efecto de la subunidad j anidada en tratamiento i ($j = 1, 2, ..., n_i$)
-    - $\varepsilon_{ijk}$ = Error experimental ($k = 1, 2, ..., m_{ij}$)
-    
-    **Nota:** La notación $\beta_{j(i)}$ indica que el factor subunidad está anidado dentro del factor tratamiento.
-    """)
+    st.markdown("**Donde:**")
+    st.markdown("- $Y_{ijk}$ = Observación k en la subunidad j del tratamiento i")
+    st.markdown("- $\\mu$ = Media general poblacional")
+    st.markdown("- $\\tau_i$ = Efecto del tratamiento i $(i = 1, 2, ..., t)$")
+    st.markdown("- $\\beta_{j(i)}$ = Efecto de la subunidad j anidada en tratamiento i $(j = 1, 2, ..., n_i)$")
+    st.markdown("- $\\varepsilon_{ijk}$ = Error experimental $(k = 1, 2, ..., m_{ij})$")
+    st.markdown("")
+    st.markdown("**Nota:** La notación $\\beta_{j(i)}$ indica que el factor subunidad está anidado dentro del factor tratamiento.")
     
     st.markdown("### Estructura Jerárquica")
     
@@ -1430,21 +1422,19 @@ elif seccion == "📚 Teoría":
     
     st.markdown("#### 6. Interpretación de Resultados")
     
-    st.markdown("""
-    **Si $F_{Trat}$ es significativo:**
-    - Existen diferencias reales entre tratamientos
-    - Se recomienda realizar comparaciones múltiples (Tukey, Duncan, etc.)
-    
-    **Si $F_{Sub(Trat)}$ es significativo:**
-    - Existe variabilidad importante entre pozas del mismo tratamiento
-    - El diseño con submuestreo fue necesario y apropiado
-    - Las condiciones dentro de tratamientos no son homogéneas
-    
-    **Si $F_{Sub(Trat)}$ NO es significativo:**
-    - Poca variabilidad entre pozas del mismo tratamiento
-    - Las condiciones dentro de tratamientos son homogéneas
-    - Un diseño sin submuestreo habría sido suficiente
-    """)
+    st.markdown("**Si $F_{Trat}$ es significativo:**")
+    st.markdown("- Existen diferencias reales entre tratamientos")
+    st.markdown("- Se recomienda realizar comparaciones múltiples (Tukey, Duncan, etc.)")
+    st.markdown("")
+    st.markdown("**Si $F_{Sub(Trat)}$ es significativo:**")
+    st.markdown("- Existe variabilidad importante entre pozas del mismo tratamiento")
+    st.markdown("- El diseño con submuestreo fue necesario y apropiado")
+    st.markdown("- Las condiciones dentro de tratamientos no son homogéneas")
+    st.markdown("")
+    st.markdown("**Si $F_{Sub(Trat)}$ NO es significativo:**")
+    st.markdown("- Poca variabilidad entre pozas del mismo tratamiento")
+    st.markdown("- Las condiciones dentro de tratamientos son homogéneas")
+    st.markdown("- Un diseño sin submuestreo habría sido suficiente")
     
     st.markdown("---")
     st.markdown("## 📊 Comparaciones Múltiples - Prueba de Tukey (HSD)")
@@ -1457,17 +1447,15 @@ elif seccion == "📚 Teoría":
     st.markdown("### Estadístico de Tukey")
     st.latex(r"HSD = q_{\alpha, t, gl_{error}} \times \sqrt{\frac{CM_{Error}}{n}}")
     
-    st.markdown("""
-    **Donde:**
-    - $HSD$ = Diferencia Honestamente Significativa (Honestly Significant Difference)
-    - $q_{\alpha, t, gl_{error}}$ = Valor crítico del rango estudentizado
-    - $CM_{Error}$ = Cuadrado medio del error
-    - $n$ = Número de repeticiones por tratamiento (para diseños balanceados)
-    
-    **Regla de decisión:**
-    - Si $|\bar{Y}_i - \bar{Y}_j| > HSD$: Los tratamientos i y j son significativamente diferentes
-    - Si $|\bar{Y}_i - \bar{Y}_j| \leq HSD$: No hay diferencia significativa
-    """)
+    st.markdown("**Donde:**")
+    st.markdown("- $HSD$ = Diferencia Honestamente Significativa (Honestly Significant Difference)")
+    st.markdown("- $q_{\\alpha, t, gl_{error}}$ = Valor crítico del rango estudentizado")
+    st.markdown("- $CM_{Error}$ = Cuadrado medio del error")
+    st.markdown("- $n$ = Número de repeticiones por tratamiento (para diseños balanceados)")
+    st.markdown("")
+    st.markdown("**Regla de decisión:**")
+    st.markdown("- Si $|\\bar{Y}_i - \\bar{Y}_j| > HSD$: Los tratamientos i y j son significativamente diferentes")
+    st.markdown("- Si $|\\bar{Y}_i - \\bar{Y}_j| \\leq HSD$: No hay diferencia significativa")
     
     st.markdown("### Para Diseños No Balanceados")
     
