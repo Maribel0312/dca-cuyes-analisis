@@ -20,9 +20,47 @@ st.markdown("""
 
 # Sidebar para navegación
 st.sidebar.title("📋 Navegación")
+
+# NUEVA SECCIÓN: Configuración del experimento
+st.sidebar.markdown("---")
+st.sidebar.title("⚙️ Configuración")
+
+with st.sidebar.expander("🔧 Personalizar Experimento", expanded=False):
+    st.markdown("**Parámetros del Diseño:**")
+    
+    # Número de tratamientos
+    n_tratamientos_custom = st.slider(
+        "Número de tratamientos", 
+        min_value=2, 
+        max_value=6, 
+        value=4,
+        help="Cantidad de dietas diferentes a comparar"
+    )
+    
+    # Repeticiones
+    n_repeticiones_custom = st.number_input(
+        "Repeticiones por tratamiento",
+        min_value=5,
+        max_value=30,
+        value=15,
+        help="Número de unidades experimentales por tratamiento"
+    )
+    
+    # Nivel de significancia
+    alpha_custom = st.select_slider(
+        "Nivel de significancia (α)",
+        options=[0.01, 0.05, 0.10],
+        value=0.05,
+        help="Probabilidad de error tipo I"
+    )
+    
+    st.info(f"📊 Configuración: {n_tratamientos_custom} tratamientos × {n_repeticiones_custom} repeticiones = {n_tratamientos_custom * n_repeticiones_custom} observaciones")
+
+st.sidebar.markdown("---")
+
 seccion = st.sidebar.radio(
     "Seleccione una sección:",
-    ["🏠 Inicio", "📚 Teoría", "📊 Modelos Experimentales", "📈 Comparación de Modelos"]
+    ["🏠 Inicio", "📚 Teoría", "📊 Modelos Experimentales", "📤 Mis Datos", "📈 Comparación de Modelos"]
 )
 
 # Si selecciona Modelos, mostrar submenu
@@ -35,13 +73,13 @@ if seccion == "📊 Modelos Experimentales":
          "Modelo 5: NoBal-Bal (Sub)", "Modelo 6: NoBal-NoBal (Sub)"]
     )
 
-# Funciones para generar datos - CADA MODELO CON SEMILLA DIFERENTE Y CARACTERÍSTICAS ÚNICAS
+# Funciones para generar datos - CADA MODELO CON SEMILLA DIFERENTE
 def generar_datos_modelo1():
     """Modelo 1: Balanceado - Mayor uniformidad"""
     np.random.seed(42)
     datos = []
     medias = {"T1": 520, "T2": 580, "T3": 545, "T4": 595}
-    desv = {"T1": 28, "T2": 32, "T3": 25, "T4": 35}  # Baja variabilidad
+    desv = {"T1": 28, "T2": 32, "T3": 25, "T4": 35}
     
     for trat in ["T1", "T2", "T3", "T4"]:
         for i in range(15):
@@ -57,11 +95,11 @@ def generar_datos_modelo1():
     return pd.DataFrame(datos)
 
 def generar_datos_modelo2():
-    """Modelo 2: No Balanceado - Mayor variabilidad entre grupos"""
+    """Modelo 2: No Balanceado"""
     np.random.seed(123)
     datos = []
-    medias = {"T1": 515, "T2": 590, "T3": 540, "T4": 605}  # Diferencias más marcadas
-    desv = {"T1": 40, "T2": 35, "T3": 38, "T4": 42}  # Mayor variabilidad
+    medias = {"T1": 515, "T2": 590, "T3": 540, "T4": 605}
+    desv = {"T1": 40, "T2": 35, "T3": 38, "T4": 42}
     n_cuyes = {"T1": 14, "T2": 18, "T3": 16, "T4": 20}
     
     for trat in ["T1", "T2", "T3", "T4"]:
@@ -78,7 +116,7 @@ def generar_datos_modelo2():
     return pd.DataFrame(datos)
 
 def generar_datos_modelo3():
-    """Modelo 3: Bal-Bal Sub - Efecto de poza moderado"""
+    """Modelo 3: Bal-Bal Sub"""
     np.random.seed(456)
     datos = []
     medias = {"T1": 525, "T2": 575, "T3": 550, "T4": 588}
@@ -102,7 +140,7 @@ def generar_datos_modelo3():
     return pd.DataFrame(datos)
 
 def generar_datos_modelo4():
-    """Modelo 4: Bal-NoBal Sub - Submuestreo desigual"""
+    """Modelo 4: Bal-NoBal Sub"""
     np.random.seed(789)
     datos = []
     medias = {"T1": 518, "T2": 585, "T3": 548, "T4": 600}
@@ -127,7 +165,7 @@ def generar_datos_modelo4():
     return pd.DataFrame(datos)
 
 def generar_datos_modelo5():
-    """Modelo 5: NoBal-Bal Sub - Pozas desiguales"""
+    """Modelo 5: NoBal-Bal Sub"""
     np.random.seed(321)
     datos = []
     medias = {"T1": 522, "T2": 578, "T3": 552, "T4": 592}
@@ -152,11 +190,11 @@ def generar_datos_modelo5():
     return pd.DataFrame(datos)
 
 def generar_datos_modelo6():
-    """Modelo 6: NoBal-NoBal Sub - Completamente desbalanceado"""
+    """Modelo 6: NoBal-NoBal Sub"""
     np.random.seed(654)
     datos = []
-    medias = {"T1": 510, "T2": 595, "T3": 535, "T4": 610}  # Diferencias máximas
-    desv_poza = {"T1": 30, "T2": 33, "T3": 27, "T4": 36}  # Mayor variabilidad
+    medias = {"T1": 510, "T2": 595, "T3": 535, "T4": 610}
+    desv_poza = {"T1": 30, "T2": 33, "T3": 27, "T4": 36}
     desv_cuy = 20
     n_pozas = {"T1": 4, "T2": 6, "T3": 5, "T4": 7}
     cuyes_por_poza = {
@@ -187,8 +225,6 @@ def generar_datos_modelo6():
 def calcular_anova_unifactorial_pasos(df):
     st.markdown("### 📐 Cálculos Paso a Paso - ANOVA Unifactorial")
     
-    # Paso 1: Datos básicos
-    st.markdown("#### Paso 1: Identificación de datos básicos")
     n_total = len(df)
     tratamientos = sorted(df['Tratamiento'].unique())
     k = len(tratamientos)
@@ -198,7 +234,6 @@ def calcular_anova_unifactorial_pasos(df):
     col2.metric("Tratamientos (k)", k)
     col3.metric("Grupos", k)
     
-    # Paso 2: Medias por tratamiento
     st.markdown("#### Paso 2: Cálculo de medias por tratamiento")
     medias_df = df.groupby('Tratamiento').agg({
         'Ganancia_Peso_g': ['count', 'mean', 'sum']
@@ -209,17 +244,14 @@ def calcular_anova_unifactorial_pasos(df):
     grand_mean = df['Ganancia_Peso_g'].mean()
     st.info(f"**Media General (Ȳ..):** {grand_mean:.2f} g")
     
-    # Paso 3: Suma de Cuadrados
     st.markdown("#### Paso 3: Cálculo de Sumas de Cuadrados")
     
-    # SC Total
     st.markdown("**3.1. Suma de Cuadrados Total (SCT)**")
     st.latex(r"SCT = \sum_{i=1}^{k}\sum_{j=1}^{n_i}(Y_{ij} - \bar{Y}_{..})^2")
     
     ss_total = ((df['Ganancia_Peso_g'] - grand_mean) ** 2).sum()
     st.write(f"SCT = {ss_total:.2f}")
     
-    # SC Entre Tratamientos
     st.markdown("**3.2. Suma de Cuadrados Entre Tratamientos (SC Trat)**")
     st.latex(r"SC_{Trat} = \sum_{i=1}^{k}n_i(\bar{Y}_{i.} - \bar{Y}_{..})^2")
     
@@ -241,14 +273,12 @@ def calcular_anova_unifactorial_pasos(df):
     st.dataframe(pd.DataFrame(calc_between), use_container_width=True, hide_index=True)
     st.write(f"**SC Trat = {ss_between:.2f}**")
     
-    # SC Error
     st.markdown("**3.3. Suma de Cuadrados del Error (SC Error)**")
     st.latex(r"SC_{Error} = SCT - SC_{Trat}")
     
     ss_within = ss_total - ss_between
     st.write(f"SC Error = {ss_total:.2f} - {ss_between:.2f} = **{ss_within:.2f}**")
     
-    # Paso 4: Grados de Libertad
     st.markdown("#### Paso 4: Grados de Libertad")
     df_between = k - 1
     df_within = n_total - k
@@ -261,7 +291,6 @@ def calcular_anova_unifactorial_pasos(df):
     })
     st.dataframe(gl_df, use_container_width=True, hide_index=True)
     
-    # Paso 5: Cuadrados Medios
     st.markdown("#### Paso 5: Cuadrados Medios")
     
     ms_between = ss_between / df_between
@@ -270,20 +299,18 @@ def calcular_anova_unifactorial_pasos(df):
     st.latex(r"CM_{Trat} = \frac{SC_{Trat}}{GL_{Trat}} = \frac{" + f"{ss_between:.2f}" + r"}{" + str(df_between) + r"} = " + f"{ms_between:.2f}")
     st.latex(r"CM_{Error} = \frac{SC_{Error}}{GL_{Error}} = \frac{" + f"{ss_within:.2f}" + r"}{" + str(df_within) + r"} = " + f"{ms_within:.2f}")
     
-    # Paso 6: Estadístico F
     st.markdown("#### Paso 6: Estadístico F")
     f_calc = ms_between / ms_within
     st.latex(r"F = \frac{CM_{Trat}}{CM_{Error}} = \frac{" + f"{ms_between:.2f}" + r"}{" + f"{ms_within:.2f}" + r"} = " + f"{f_calc:.4f}")
     
-    # Paso 7: P-valor
     st.markdown("#### Paso 7: P-valor")
     p_value = 1 - stats.f.cdf(f_calc, df_between, df_within)
     st.write(f"P-valor = P(F > {f_calc:.4f}) = **{p_value:.6f}**")
     
-    if p_value < 0.05:
-        st.success("✅ Como p-valor < 0.05, rechazamos H₀")
+    if p_value < alpha_custom:
+        st.success(f"✅ Como p-valor < {alpha_custom}, rechazamos H₀")
     else:
-        st.warning("⚠️ Como p-valor ≥ 0.05, no rechazamos H₀")
+        st.warning(f"⚠️ Como p-valor ≥ {alpha_custom}, no rechazamos H₀")
     
     return {
         'SS_Between': ss_between,
@@ -298,17 +325,15 @@ def calcular_anova_unifactorial_pasos(df):
         'P_Value': p_value
     }
 
-# CÁLCULO ANOVA BIFACTORIAL COMPLETO PASO A PASO
+# CÁLCULO ANOVA BIFACTORIAL
 def calcular_anova_bifactorial_pasos(df):
-    st.markdown("### 📐 Cálculos Completos Paso a Paso - ANOVA Bifactorial")
+    st.markdown("### 📐 Cálculos Paso a Paso - ANOVA Bifactorial")
     
-    st.info("**Diseño Bifactorial:** Factor A = Tratamiento (4 niveles), Factor B = Sexo simulado (2 niveles: Macho/Hembra)")
+    st.info("**Diseño Bifactorial:** Factor A = Tratamiento, Factor B = Sexo simulado")
     
-    # Crear Factor B basado en índice de forma determinística
     df_bif = df.copy()
     df_bif['Factor_A'] = df_bif['Tratamiento']
     
-    # Asignar sexo de forma balanceada por tratamiento
     sexos = []
     for trat in sorted(df_bif['Tratamiento'].unique()):
         subset = df_bif[df_bif['Tratamiento'] == trat]
@@ -318,9 +343,6 @@ def calcular_anova_bifactorial_pasos(df):
         sexos.extend(sexos_trat)
     
     df_bif['Factor_B'] = sexos
-    
-    # PASO 1: Estructura del diseño
-    st.markdown("#### Paso 1: Estructura del Diseño Bifactorial")
     
     factor_a_levels = sorted(df_bif['Factor_A'].unique())
     factor_b_levels = sorted(df_bif['Factor_B'].unique())
@@ -334,103 +356,33 @@ def calcular_anova_bifactorial_pasos(df):
     col3.metric("Factor B (b)", b)
     col4.metric("Celdas (a×b)", a*b)
     
-    st.write(f"**Factor A (Tratamiento):** {', '.join(factor_a_levels)}")
-    st.write(f"**Factor B (Sexo):** {', '.join(factor_b_levels)}")
-    
-    # Conteo por celda
-    st.markdown("**Frecuencias por Celda:**")
-    freq_table = df_bif.pivot_table(values='Ganancia_Peso_g', 
-                                     index='Factor_A', 
-                                     columns='Factor_B', 
-                                     aggfunc='count',
-                                     fill_value=0)
-    st.dataframe(freq_table, use_container_width=True)
-    
-    # PASO 2: Tabla de medias
-    st.markdown("#### Paso 2: Cálculo de Medias")
-    st.latex(r"\bar{Y}_{ij.} = \frac{\sum_{k=1}^{n_{ij}} Y_{ijk}}{n_{ij}}")
-    
     tabla_medias = df_bif.pivot_table(values='Ganancia_Peso_g', 
                                        index='Factor_A', 
                                        columns='Factor_B', 
                                        aggfunc='mean')
-    st.write("**Medias por Celda (Ȳᵢⱼ.):**")
+    st.write("**Medias por Celda:**")
     st.dataframe(tabla_medias.round(2), use_container_width=True)
     
-    # Medias marginales
     medias_a = df_bif.groupby('Factor_A')['Ganancia_Peso_g'].mean()
     medias_b = df_bif.groupby('Factor_B')['Ganancia_Peso_g'].mean()
     grand_mean = df_bif['Ganancia_Peso_g'].mean()
     
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write("**Medias Marginales Factor A (Ȳᵢ..):**")
-        medias_a_df = medias_a.round(2).to_frame('Media')
-        st.dataframe(medias_a_df, use_container_width=True)
-    with col2:
-        st.write("**Medias Marginales Factor B (Ȳ.ⱼ.):**")
-        medias_b_df = medias_b.round(2).to_frame('Media')
-        st.dataframe(medias_b_df, use_container_width=True)
-    
-    st.success(f"**Media General (Ȳ...):** {grand_mean:.2f} g")
-    
-    # PASO 3: Suma de Cuadrados Total
-    st.markdown("#### Paso 3: Suma de Cuadrados Total (SCT)")
-    st.latex(r"SCT = \sum_{i=1}^{a}\sum_{j=1}^{b}\sum_{k=1}^{n_{ij}}(Y_{ijk} - \bar{Y}_{...})^2")
+    st.success(f"**Media General:** {grand_mean:.2f} g")
     
     ss_total = ((df_bif['Ganancia_Peso_g'] - grand_mean) ** 2).sum()
-    st.write(f"**SCT = {ss_total:.2f}**")
     
-    # PASO 4: Suma de Cuadrados Factor A
-    st.markdown("#### Paso 4: Suma de Cuadrados Factor A (SC_A)")
-    st.latex(r"SC_A = bn\sum_{i=1}^{a}(\bar{Y}_{i..} - \bar{Y}_{...})^2")
-    st.write("Donde n es el promedio de observaciones por nivel de A")
-    
-    calc_a = []
     ss_a = 0
-    for nivel_a in factor_a_levels:
-        n_a = len(df_bif[df_bif['Factor_A'] == nivel_a])
-        media_a = medias_a[nivel_a]
-        ss_a_i = n_a * (media_a - grand_mean) ** 2
-        ss_a += ss_a_i
-        calc_a.append({
-            'Nivel A': nivel_a,
-            'n': n_a,
-            'Media': f"{media_a:.2f}",
-            'Cálculo': f"{n_a} × ({media_a:.2f} - {grand_mean:.2f})²",
-            'SC': f"{ss_a_i:.2f}"
-        })
+    for nivel in factor_a_levels:
+        n_nivel = len(df_bif[df_bif['Factor_A'] == nivel])
+        media_nivel = medias_a[nivel]
+        ss_a += n_nivel * (media_nivel - grand_mean) ** 2
     
-    st.dataframe(pd.DataFrame(calc_a), use_container_width=True, hide_index=True)
-    st.write(f"**SC_A = {ss_a:.2f}**")
-    
-    # PASO 5: Suma de Cuadrados Factor B
-    st.markdown("#### Paso 5: Suma de Cuadrados Factor B (SC_B)")
-    st.latex(r"SC_B = an\sum_{j=1}^{b}(\bar{Y}_{.j.} - \bar{Y}_{...})^2")
-    
-    calc_b = []
     ss_b = 0
-    for nivel_b in factor_b_levels:
-        n_b = len(df_bif[df_bif['Factor_B'] == nivel_b])
-        media_b = medias_b[nivel_b]
-        ss_b_j = n_b * (media_b - grand_mean) ** 2
-        ss_b += ss_b_j
-        calc_b.append({
-            'Nivel B': nivel_b,
-            'n': n_b,
-            'Media': f"{media_b:.2f}",
-            'Cálculo': f"{n_b} × ({media_b:.2f} - {grand_mean:.2f})²",
-            'SC': f"{ss_b_j:.2f}"
-        })
+    for nivel in factor_b_levels:
+        n_nivel = len(df_bif[df_bif['Factor_B'] == nivel])
+        media_nivel = medias_b[nivel]
+        ss_b += n_nivel * (media_nivel - grand_mean) ** 2
     
-    st.dataframe(pd.DataFrame(calc_b), use_container_width=True, hide_index=True)
-    st.write(f"**SC_B = {ss_b:.2f}**")
-    
-    # PASO 6: Suma de Cuadrados Interacción AB
-    st.markdown("#### Paso 6: Suma de Cuadrados Interacción AB (SC_AB)")
-    st.latex(r"SC_{AB} = n\sum_{i=1}^{a}\sum_{j=1}^{b}(\bar{Y}_{ij.} - \bar{Y}_{i..} - \bar{Y}_{.j.} + \bar{Y}_{...})^2")
-    
-    calc_ab = []
     ss_ab = 0
     for nivel_a in factor_a_levels:
         for nivel_b in factor_b_levels:
@@ -438,30 +390,9 @@ def calcular_anova_bifactorial_pasos(df):
             if len(subset) > 0:
                 n_cell = len(subset)
                 mean_cell = subset['Ganancia_Peso_g'].mean()
-                interaction_effect = mean_cell - medias_a[nivel_a] - medias_b[nivel_b] + grand_mean
-                ss_ab_ij = n_cell * (interaction_effect ** 2)
-                ss_ab += ss_ab_ij
-                calc_ab.append({
-                    'Celda': f"{nivel_a}-{nivel_b}",
-                    'n': n_cell,
-                    'Ȳᵢⱼ': f"{mean_cell:.2f}",
-                    'Efecto Int.': f"{interaction_effect:.2f}",
-                    'SC': f"{ss_ab_ij:.2f}"
-                })
-    
-    st.dataframe(pd.DataFrame(calc_ab), use_container_width=True, hide_index=True)
-    st.write(f"**SC_AB = {ss_ab:.2f}**")
-    
-    # PASO 7: Suma de Cuadrados Error
-    st.markdown("#### Paso 7: Suma de Cuadrados Error (SC_Error)")
-    st.latex(r"SC_{Error} = SCT - SC_A - SC_B - SC_{AB}")
+                ss_ab += n_cell * (mean_cell - medias_a[nivel_a] - medias_b[nivel_b] + grand_mean) ** 2
     
     ss_error = ss_total - ss_a - ss_b - ss_ab
-    st.write(f"SC_Error = {ss_total:.2f} - {ss_a:.2f} - {ss_b:.2f} - {ss_ab:.2f}")
-    st.write(f"**SC_Error = {ss_error:.2f}**")
-    
-    # PASO 8: Grados de Libertad
-    st.markdown("#### Paso 8: Grados de Libertad")
     
     df_a = a - 1
     df_b = b - 1
@@ -469,43 +400,10 @@ def calcular_anova_bifactorial_pasos(df):
     df_error = n_total - (a * b)
     df_total = n_total - 1
     
-    gl_df = pd.DataFrame({
-        'Fuente': ['Factor A', 'Factor B', 'Interacción AB', 'Error', 'Total'],
-        'Fórmula': [
-            f'a - 1 = {a} - 1',
-            f'b - 1 = {b} - 1',
-            f'(a-1)(b-1) = ({a}-1)({b}-1)',
-            f'N - ab = {n_total} - ({a}×{b})',
-            f'N - 1 = {n_total} - 1'
-        ],
-        'GL': [df_a, df_b, df_ab, df_error, df_total]
-    })
-    st.dataframe(gl_df, use_container_width=True, hide_index=True)
-    
-    # PASO 9: Cuadrados Medios
-    st.markdown("#### Paso 9: Cuadrados Medios (CM)")
-    st.latex(r"CM = \frac{SC}{GL}")
-    
     cm_a = ss_a / df_a if df_a > 0 else 0
     cm_b = ss_b / df_b if df_b > 0 else 0
     cm_ab = ss_ab / df_ab if df_ab > 0 else 0
     cm_error = ss_error / df_error if df_error > 0 else 1
-    
-    cm_df = pd.DataFrame({
-        'Fuente': ['Factor A', 'Factor B', 'Interacción AB', 'Error'],
-        'Cálculo': [
-            f'{ss_a:.2f} / {df_a}',
-            f'{ss_b:.2f} / {df_b}',
-            f'{ss_ab:.2f} / {df_ab}',
-            f'{ss_error:.2f} / {df_error}'
-        ],
-        'CM': [f"{cm_a:.2f}", f"{cm_b:.2f}", f"{cm_ab:.2f}", f"{cm_error:.2f}"]
-    })
-    st.dataframe(cm_df, use_container_width=True, hide_index=True)
-    
-    # PASO 10: Estadísticos F
-    st.markdown("#### Paso 10: Estadísticos F y P-valores")
-    st.latex(r"F = \frac{CM_{Efecto}}{CM_{Error}}")
     
     f_a = cm_a / cm_error if cm_error > 0 else 0
     f_b = cm_b / cm_error if cm_error > 0 else 0
@@ -514,36 +412,6 @@ def calcular_anova_bifactorial_pasos(df):
     p_a = 1 - stats.f.cdf(f_a, df_a, df_error) if f_a > 0 else 1
     p_b = 1 - stats.f.cdf(f_b, df_b, df_error) if f_b > 0 else 1
     p_ab = 1 - stats.f.cdf(f_ab, df_ab, df_error) if f_ab > 0 else 1
-    
-    f_result_df = pd.DataFrame({
-        'Fuente': ['Factor A (Tratamiento)', 'Factor B (Sexo)', 'Interacción A×B'],
-        'F calculado': [f"{f_a:.4f}", f"{f_b:.4f}", f"{f_ab:.4f}"],
-        'P-valor': [f"{p_a:.6f}", f"{p_b:.6f}", f"{p_ab:.6f}"],
-        'Significativo (α=0.05)': [
-            '✅ Sí' if p_a < 0.05 else '❌ No',
-            '✅ Sí' if p_b < 0.05 else '❌ No',
-            '✅ Sí' if p_ab < 0.05 else '❌ No'
-        ]
-    })
-    st.dataframe(f_result_df, use_container_width=True, hide_index=True)
-    
-    # Interpretación
-    st.markdown("#### 📊 Interpretación de Resultados:")
-    
-    if p_a < 0.05:
-        st.success(f"✅ **Factor A (Tratamiento):** Efecto significativo (p = {p_a:.6f}). Los tratamientos producen diferentes ganancias de peso.")
-    else:
-        st.warning(f"⚠️ **Factor A (Tratamiento):** No hay efecto significativo (p = {p_a:.6f}).")
-    
-    if p_b < 0.05:
-        st.success(f"✅ **Factor B (Sexo):** Efecto significativo (p = {p_b:.6f}). El sexo influye en la ganancia de peso.")
-    else:
-        st.info(f"ℹ️ **Factor B (Sexo):** No hay efecto significativo (p = {p_b:.6f}).")
-    
-    if p_ab < 0.05:
-        st.success(f"✅ **Interacción A×B:** Significativa (p = {p_ab:.6f}). El efecto del tratamiento depende del sexo del animal.")
-    else:
-        st.info(f"ℹ️ **Interacción A×B:** No significativa (p = {p_ab:.6f}). Los factores actúan independientemente.")
     
     return {
         'SS_A': ss_a, 'SS_B': ss_b, 'SS_AB': ss_ab, 'SS_Error': ss_error, 'SS_Total': ss_total,
@@ -616,53 +484,34 @@ def tukey_hsd(df):
     return pd.DataFrame(comparaciones), medias
 
 def crear_graficos(df, result_uni):
-    """Crear gráficos necesarios con interpretaciones"""
-    
-    medias = df.groupby('Tratamiento')['Ganancia_Peso_g'].mean().sort_values(ascending=False)
-    mejor_trat = medias.index[0]
-    mejor_media = medias.iloc[0]
-    
     st.markdown("## 📊 Visualización de Resultados")
     
-    # Gráfico 1: Boxplot
+    # Boxplot
     st.markdown("### 1. Distribución de Datos por Tratamiento")
     fig_box = px.box(df, x='Tratamiento', y='Ganancia_Peso_g',
                      title='Distribución de Ganancia de Peso por Tratamiento',
-                     labels={'Ganancia_Peso_g': 'Ganancia de Peso (g)', 'Tratamiento': 'Tratamiento'},
+                     labels={'Ganancia_Peso_g': 'Ganancia de Peso (g)'},
                      color='Tratamiento',
                      color_discrete_sequence=px.colors.qualitative.Set2)
     fig_box.update_layout(showlegend=False, height=500)
     st.plotly_chart(fig_box, use_container_width=True)
     
     st.markdown("""
-    **📌 Interpretación del Boxplot:**
-    - Este gráfico muestra la distribución, variabilidad y valores atípicos de cada tratamiento
-    - La **línea central** de cada caja representa la mediana
-    - Los **bordes de la caja** representan el primer y tercer cuartil (Q1 y Q3)
-    - Los **bigotes** muestran el rango de datos dentro de 1.5×IQR
-    - Los **puntos** fuera de los bigotes son valores atípicos
+    **📌 Interpretación:** Este gráfico muestra la distribución, variabilidad y valores atípicos de cada tratamiento.
     """)
     
-    # Gráfico 2: Violin Plot
-    st.markdown("### 2. Densidad y Distribución de Datos")
+    # Violin Plot
+    st.markdown("### 2. Densidad y Distribución")
     fig_violin = px.violin(df, x='Tratamiento', y='Ganancia_Peso_g',
                           title='Gráfico de Violín - Densidad de Distribución',
-                          labels={'Ganancia_Peso_g': 'Ganancia de Peso (g)', 'Tratamiento': 'Tratamiento'},
+                          labels={'Ganancia_Peso_g': 'Ganancia de Peso (g)'},
                           color='Tratamiento',
                           box=True,
                           color_discrete_sequence=px.colors.qualitative.Pastel)
     fig_violin.update_layout(showlegend=False, height=500)
     st.plotly_chart(fig_violin, use_container_width=True)
     
-    st.markdown("""
-    **📌 Interpretación del Gráfico de Violín:**
-    - Combina la información del boxplot con la densidad de distribución
-    - El **ancho** del violín indica la densidad de datos en ese valor
-    - Permite comparar visualmente la forma de distribución entre tratamientos
-    - Un violín más ancho indica mayor concentración de datos en ese rango
-    """)
-    
-    # Gráfico 3: Intervalos de Confianza
+    # Intervalos de Confianza
     st.markdown("### 3. Medias e Intervalos de Confianza (95%)")
     stats_df = df.groupby('Tratamiento')['Ganancia_Peso_g'].agg(['mean', 'sem']).reset_index()
     stats_df['ci'] = stats_df['sem'] * 1.96
@@ -684,20 +533,11 @@ def crear_graficos(df, result_uni):
     )
     st.plotly_chart(fig_ci, use_container_width=True)
     
-    st.markdown("""
-    **📌 Interpretación de Intervalos de Confianza:**
-    - Los **puntos** representan la media de cada tratamiento
-    - Las **barras de error** muestran el intervalo de confianza del 95%
-    - Si dos intervalos **NO se solapan**, existe alta probabilidad de diferencia significativa
-    - Tratamientos con intervalos que se solapan pueden no ser significativamente diferentes
-    """)
-    
-    # Gráfico 4: QQ-Plot para normalidad
+    # QQ-Plot
     st.markdown("### 4. Verificación de Normalidad (QQ-Plot)")
     residuos = df['Ganancia_Peso_g'] - df.groupby('Tratamiento')['Ganancia_Peso_g'].transform('mean')
     
     fig_qq = go.Figure()
-    
     sorted_residuos = np.sort(residuos)
     n = len(sorted_residuos)
     theoretical_quantiles = stats.norm.ppf(np.linspace(0.01, 0.99, n))
@@ -719,22 +559,14 @@ def crear_graficos(df, result_uni):
     ))
     
     fig_qq.update_layout(
-        title='QQ-Plot - Verificación de Normalidad de Residuos',
+        title='QQ-Plot - Verificación de Normalidad',
         xaxis_title='Cuantiles Teóricos',
         yaxis_title='Cuantiles Muestrales',
         height=500
     )
     st.plotly_chart(fig_qq, use_container_width=True)
     
-    st.markdown("""
-    **📌 Interpretación del QQ-Plot:**
-    - Verifica el supuesto de **normalidad** de los datos
-    - Si los puntos siguen aproximadamente la línea roja, los datos son normales
-    - Desviaciones en los extremos son comunes y aceptables
-    - Este supuesto es importante para la validez del ANOVA
-    """)
-    
-    # Gráfico 5: Residuos vs Valores Ajustados
+    # Residuos vs Ajustados
     st.markdown("### 5. Diagnóstico de Residuos")
     valores_ajustados = df.groupby('Tratamiento')['Ganancia_Peso_g'].transform('mean')
     
@@ -749,23 +581,13 @@ def crear_graficos(df, result_uni):
     fig_resid.add_hline(y=0, line_dash="dash", line_color="red")
     fig_resid.update_layout(
         title='Residuos vs Valores Ajustados',
-        xaxis_title='Valores Ajustados (Medias de Tratamiento)',
+        xaxis_title='Valores Ajustados',
         yaxis_title='Residuos',
         height=500
     )
     st.plotly_chart(fig_resid, use_container_width=True)
-    
-    st.markdown("""
-    **📌 Interpretación del Gráfico de Residuos:**
-    - Verifica el supuesto de **homocedasticidad** (varianza constante)
-    - Los residuos deben distribuirse aleatoriamente alrededor de cero
-    - **No debe haber patrones** (forma de embudo, curvas, etc.)
-    - Patrones indican violación de supuestos del ANOVA
-    """)
 
 def mostrar_interpretaciones(df, result_uni):
-    """Mostrar interpretaciones detalladas"""
-    
     st.markdown("## 💡 Interpretaciones y Conclusiones")
     
     medias = df.groupby('Tratamiento')['Ganancia_Peso_g'].mean().sort_values(ascending=False)
@@ -776,138 +598,29 @@ def mostrar_interpretaciones(df, result_uni):
     
     descripciones = {
         'T1': 'Alimento balanceado comercial (18% proteína)',
-        'T2': 'Alimento con forraje verde (alfalfa + concentrado 20% proteína)',
-        'T3': 'Dieta mixta (forraje + subproductos agrícolas + 16% proteína)',
-        'T4': 'Alimento suplementado con probióticos (19% proteína)'
+        'T2': 'Alimento con forraje verde (20% proteína)',
+        'T3': 'Dieta mixta (16% proteína)',
+        'T4': 'Alimento con probióticos (19% proteína)'
     }
     
     st.markdown("### 🏆 El Mejor Tratamiento")
     st.success(f"""
-    **Tratamiento {mejor_trat}** es el mejor tratamiento con una ganancia promedio de **{mejor_media:.1f} g**.
+    **Tratamiento {mejor_trat}** es el mejor con **{mejor_media:.1f} g** de ganancia promedio.
     
-    **Descripción:** {descripciones[mejor_trat]}
+    **Descripción:** {descripciones.get(mejor_trat, 'Tratamiento experimental')}
     """)
     
-    st.markdown("### 📊 ¿Por qué es el mejor tratamiento?")
-    
-    if result_uni['P_Value'] < 0.05:
+    if result_uni['P_Value'] < alpha_custom:
         tukey_df, _ = tukey_hsd(df)
         comparaciones_mejor = tukey_df[tukey_df['Comparación'].str.contains(mejor_trat)]
         n_sig = comparaciones_mejor[comparaciones_mejor['Significativo'] == 'Sí'].shape[0]
         
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("#### 📈 Evidencia Estadística")
-            st.write(f"""
-            ✅ **Diferencias significativas detectadas:**
-            - El ANOVA mostró p-valor = {result_uni['P_Value']:.6f} < 0.05
-            - {mejor_trat} es superior a **{n_sig}** tratamiento(s) según Tukey HSD
-            - La diferencia NO se debe al azar, sino al efecto real del tratamiento
-            
-            ✅ **Magnitud del efecto:**
-            - Diferencia vs peor tratamiento: {mejor_media - peor_media:.1f} g
-            - Representa un {((mejor_media - peor_media)/peor_media * 100):.1f}% más de ganancia
-            """)
-        
-        with col2:
-            st.markdown("#### 🔬 Explicación Biológica")
-            
-            if mejor_trat == 'T1':
-                st.write("""
-                **Alimento Balanceado Comercial:**
-                - Formulación industrial optimizada
-                - Balance perfecto de nutrientes
-                - Digestibilidad constante
-                - Control de calidad riguroso
-                """)
-            elif mejor_trat == 'T2':
-                st.write("""
-                **Alimento con Forraje Verde:**
-                - Mayor contenido proteico (20%)
-                - Mejor palatabilidad
-                - Fibra de calidad (alfalfa)
-                - Estimula consumo voluntario
-                - Ácidos grasos omega-3 presentes
-                """)
-            elif mejor_trat == 'T3':
-                st.write("""
-                **Dieta Mixta:**
-                - Aprovechamiento de subproductos
-                - Diversidad de nutrientes
-                - Costo-beneficio favorable
-                - Adaptación local
-                """)
-            elif mejor_trat == 'T4':
-                st.write("""
-                **Alimento con Probióticos:**
-                - Mejora salud intestinal
-                - Mayor absorción de nutrientes
-                - Fortalece sistema inmune
-                - Reduce mortalidad
-                - Optimiza conversión alimenticia
-                """)
-        
-        st.markdown("#### 📋 Tabla Comparativa de Tratamientos")
-        ranking_df = pd.DataFrame({
-            'Posición': range(1, len(medias) + 1),
-            'Tratamiento': medias.index,
-            'Descripción': [descripciones[t] for t in medias.index],
-            'Ganancia Media (g)': medias.values.round(1),
-            'Diferencia vs Mejor (g)': [0] + [(mejor_media - m) for m in medias.values[1:]],
-            'Eficiencia (%)': [100] + [(m/mejor_media * 100) for m in medias.values[1:]]
-        })
-        st.dataframe(ranking_df.round(2), use_container_width=True, hide_index=True)
-        
-    else:
-        st.warning(f"""
-        **⚠️ Consideración Importante:**
-        
-        Aunque **{mejor_trat}** presenta la mayor ganancia promedio ({mejor_media:.1f} g), 
-        el ANOVA no encontró diferencias estadísticamente significativas (p = {result_uni['P_Value']:.4f}).
-        
-        **Esto significa:**
-        - Las diferencias observadas podrían deberse a variación aleatoria
-        - No hay evidencia suficiente para afirmar superioridad real
-        - Cualquier tratamiento podría producir resultados similares
-        
-        **Recomendaciones:**
-        1. Aumentar el tamaño de muestra
-        2. Extender el período experimental
-        3. Controlar mejor las fuentes de variación
-        4. Considerar análisis económico complementario
-        """)
-    
-    st.markdown("### 🎯 Recomendaciones Prácticas")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("#### Para Producción Comercial")
-        if result_uni['P_Value'] < 0.05:
-            st.success(f"""
-            ✅ **Implementar {mejor_trat}** en producción:
-            - Ganancia promedio esperada: {mejor_media:.1f} g en 8 semanas
-            - Superioridad estadísticamente comprobada
-            - Proyección de peso comercial: {250 + mejor_media:.1f} g
-            """)
-        else:
-            st.info("""
-            💡 **Análisis complementario necesario:**
-            - Evaluar costo-beneficio de cada tratamiento
-            - Considerar disponibilidad de insumos
-            - Analizar preferencias del mercado local
-            """)
-    
-    with col2:
-        st.markdown("#### Para Investigación Futura")
-        st.write("""
-        🔬 **Líneas de investigación sugeridas:**
-        - Evaluar conversión alimenticia
-        - Medir calidad de carne obtenida
-        - Analizar costos de producción
-        - Estudiar viabilidad económica
-        - Evaluar aceptación del consumidor
+        st.markdown("### 📊 ¿Por qué es el mejor?")
+        st.write(f"""
+        ✅ **Evidencia Estadística:**
+        - ANOVA significativo (p = {result_uni['P_Value']:.6f})
+        - Superior a {n_sig} tratamiento(s) según Tukey HSD
+        - Diferencia vs peor: {mejor_media - peor_media:.1f} g ({((mejor_media - peor_media)/peor_media * 100):.1f}%)
         """)
 
 def exportar_excel(df, anova_uni, anova_bif, tukey_df):
@@ -946,15 +659,114 @@ def exportar_excel(df, anova_uni, anova_bif, tukey_df):
     
     return output.getvalue()
 
+# FUNCIÓN PARA ANALIZAR DATOS PROPIOS
+def analizar_datos_propios():
+    """Permite analizar datos cargados por el usuario"""
+    st.header("📤 Analizar Mis Propios Datos")
+    
+    st.info("""
+    **📋 Formato requerido del archivo:**
+    - Columnas obligatorias: `Tratamiento`, `Ganancia_Peso_g`
+    - Columnas opcionales: `Cuy`, `Poza`, `Peso_Inicial_g`, `Peso_Final_g`
+    - Formatos aceptados: CSV, Excel (.xlsx, .xls)
+    """)
+    
+    # Descarga plantilla
+    col1, col2 = st.columns(2)
+    with col1:
+        plantilla = pd.DataFrame({
+            'Cuy': range(1, 21),
+            'Tratamiento': ['T1']*5 + ['T2']*5 + ['T3']*5 + ['T4']*5,
+            'Peso_Inicial_g': [250]*20,
+            'Peso_Final_g': [750]*20,
+            'Ganancia_Peso_g': [500]*20
+        })
+        csv = plantilla.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            "📥 Descargar Plantilla CSV",
+            csv,
+            "plantilla_dca_cuyes.csv",
+            "text/csv",
+            help="Descarga y llena con tus datos"
+        )
+    
+    # Subir archivo
+    st.markdown("### 📂 Cargar tus datos")
+    uploaded_file = st.file_uploader(
+        "Selecciona tu archivo",
+        type=['csv', 'xlsx', 'xls'],
+        help="Sube un archivo CSV o Excel"
+    )
+    
+    if uploaded_file is not None:
+        try:
+            if uploaded_file.name.endswith('.csv'):
+                df_usuario = pd.read_csv(uploaded_file)
+            else:
+                df_usuario = pd.read_excel(uploaded_file)
+            
+            st.success(f"✅ Archivo cargado: {len(df_usuario)} observaciones")
+            
+            columnas_requeridas = ['Tratamiento', 'Ganancia_Peso_g']
+            columnas_faltantes = [col for col in columnas_requeridas if col not in df_usuario.columns]
+            
+            if columnas_faltantes:
+                st.error(f"❌ Faltan columnas: {', '.join(columnas_faltantes)}")
+                return
+            
+            st.markdown("### 👀 Vista Previa")
+            st.dataframe(df_usuario.head(10), use_container_width=True)
+            
+            col1, col2, col3 = st.columns(3)
+            col1.metric("Observaciones", len(df_usuario))
+            col2.metric("Tratamientos", df_usuario['Tratamiento'].nunique())
+            col3.metric("Media General", f"{df_usuario['Ganancia_Peso_g'].mean():.1f} g")
+            
+            if st.button("🔬 Analizar", type="primary"):
+                st.markdown("---")
+                
+                tab1, tab2, tab3, tab4 = st.tabs(["📊 Estadísticas", "🔢 ANOVA", "📈 Gráficos", "📥 Exportar"])
+                
+                with tab1:
+                    stats = df_usuario.groupby('Tratamiento')['Ganancia_Peso_g'].agg([
+                        ('N', 'count'), ('Media', 'mean'), ('Desv.Est.', 'std'), ('Mín', 'min'), ('Máx', 'max')
+                    ]).round(2)
+                    st.dataframe(stats, use_container_width=True)
+                
+                with tab2:
+                    result_uni = calcular_anova_unifactorial_pasos(df_usuario)
+                    st.markdown("---")
+                    mostrar_tabla_anova_unifactorial(result_uni)
+                    
+                    if result_uni['P_Value'] < alpha_custom:
+                        tukey_df, _ = tukey_hsd(df_usuario)
+                        st.markdown("### 🔍 Tukey HSD")
+                        st.dataframe(tukey_df, use_container_width=True, hide_index=True)
+                
+                with tab3:
+                    crear_graficos(df_usuario, result_uni)
+                
+                with tab4:
+                    tukey_df, _ = tukey_hsd(df_usuario) if result_uni['P_Value'] < alpha_custom else (pd.DataFrame(), None)
+                    result_bif = {'SS_A': 0, 'SS_B': 0, 'SS_AB': 0, 'SS_Error': 0, 'SS_Total': 0,
+                                'DF_A': 0, 'DF_B': 0, 'DF_AB': 0, 'DF_Error': 0, 'DF_Total': 0,
+                                'MS_A': 0, 'MS_B': 0, 'MS_AB': 0, 'MS_Error': 0,
+                                'F_A': 0, 'F_B': 0, 'F_AB': 0, 'P_A': 1, 'P_B': 1, 'P_AB': 1}
+                    excel_data = exportar_excel(df_usuario, result_uni, result_bif, tukey_df)
+                    st.download_button("📥 Descargar Excel", excel_data, "analisis_propios.xlsx",
+                                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        
+        except Exception as e:
+            st.error(f"❌ Error: {str(e)}")
+
 # ==================== SECCIÓN INICIO ====================
 if seccion == "🏠 Inicio":
     st.markdown("---")
     st.markdown("## 📄 Contexto del Caso")
     st.markdown("""
-    <div style='background-color: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid #1f77b4;'>
-        <p style='font-size: 16px; line-height: 1.8;'>
-        Este estudio tiene como objetivo <b>determinar el mejor alimento o dieta de engorde</b> para cuyes 
-        hasta alcanzar un peso comercial óptimo.
+    <div style='background-color: #e8f4f8; padding: 20px; border-radius: 10px;'>
+        <p style='font-size: 16px;'>
+        Este estudio determina el <b>mejor alimento de engorde</b> para cuyes hasta alcanzar peso comercial óptimo.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -964,9 +776,9 @@ if seccion == "🏠 Inicio":
     
     with col1:
         st.markdown("### 🔬 Factor Experimental")
-        st.info("**Tipo de alimento o dieta de engorde** para cuyes")
+        st.info("**Tipo de alimento o dieta de engorde**")
         
-        st.markdown("### 📋 Tratamientos Evaluados")
+        st.markdown("### 📋 Tratamientos")
         tratamientos_df = pd.DataFrame({
             'Código': ['T1', 'T2', 'T3', 'T4'],
             'Descripción': [
@@ -979,18 +791,17 @@ if seccion == "🏠 Inicio":
         st.dataframe(tratamientos_df, use_container_width=True, hide_index=True)
         
         st.markdown("### 📈 Variable Respuesta")
-        st.success("**Ganancia de peso en gramos** después de 8 semanas")
+        st.success("**Ganancia de peso (g)** después de 8 semanas")
         
     with col2:
-        st.markdown("### 📚 Modelos Disponibles")
+        st.markdown("### 📚 Navegación")
         st.markdown("""
         <div style='background-color: #f8f9fa; padding: 15px; border-radius: 8px;'>
-        <p><b>1️⃣</b> Balanceado</p>
-        <p><b>2️⃣</b> No Balanceado</p>
-        <p><b>3️⃣</b> Bal-Bal (Sub)</p>
-        <p><b>4️⃣</b> Bal-NoBal (Sub)</p>
-        <p><b>5️⃣</b> NoBal-Bal (Sub)</p>
-        <p><b>6️⃣</b> NoBal-NoBal (Sub)</p>
+        <p>🏠 <b>Inicio</b></p>
+        <p>📚 <b>Teoría</b></p>
+        <p>📊 <b>Modelos (6)</b></p>
+        <p>📤 <b>Mis Datos</b></p>
+        <p>📈 <b>Comparación</b></p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -998,19 +809,16 @@ if seccion == "🏠 Inicio":
 elif seccion == "📚 Teoría":
     st.header("📚 Marco Teórico")
     
-    tab1, tab2 = st.tabs(["🔢 Modelo Unifactorial", "🔢 Modelo Bifactorial"])
+    tab1, tab2 = st.tabs(["🔢 Unifactorial", "🔢 Bifactorial"])
     
     with tab1:
-        st.markdown("## Diseño Completamente al Azar (DCA) - Unifactorial")
-        st.markdown("### 📐 Modelo Estadístico")
+        st.markdown("## DCA Unifactorial")
         st.latex(r"Y_{ij} = \mu + \tau_i + \varepsilon_{ij}")
-        st.markdown("### 🧮 Fórmulas")
-        st.latex(r"SC_{Total} = \sum_{i=1}^{t}\sum_{j=1}^{n_i}(Y_{ij} - \bar{Y}_{..})^2")
-        st.latex(r"SC_{Trat} = \sum_{i=1}^{t}n_i(\bar{Y}_{i.} - \bar{Y}_{..})^2")
+        st.latex(r"SC_{Total} = \sum(Y_{ij} - \bar{Y})^2")
         st.latex(r"F = \frac{CM_{Trat}}{CM_{Error}}")
     
     with tab2:
-        st.markdown("## Diseño Bifactorial")
+        st.markdown("## DCA Bifactorial")
         st.latex(r"Y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \varepsilon_{ijk}")
 
 # ==================== SECCIÓN MODELOS ====================
@@ -1029,14 +837,8 @@ elif seccion == "📊 Modelos Experimentales":
             st.subheader("Datos Experimentales")
             st.dataframe(df, use_container_width=True, height=400)
             
-            # Resumen estadístico
-            st.markdown("### 📊 Resumen Estadístico")
             summary = df.groupby('Tratamiento')['Ganancia_Peso_g'].agg([
-                ('N', 'count'),
-                ('Media', 'mean'),
-                ('Desv.Est.', 'std'),
-                ('Mín', 'min'),
-                ('Máx', 'max')
+                ('N', 'count'), ('Media', 'mean'), ('Desv.Est.', 'std'), ('Mín', 'min'), ('Máx', 'max')
             ]).round(2)
             st.dataframe(summary, use_container_width=True)
         
@@ -1045,11 +847,10 @@ elif seccion == "📊 Modelos Experimentales":
             st.markdown("---")
             mostrar_tabla_anova_unifactorial(result_uni)
             
-            # Tukey HSD si es significativo
-            if result_uni['P_Value'] < 0.05:
+            if result_uni['P_Value'] < alpha_custom:
                 st.markdown("---")
-                st.markdown("### 🔍 Prueba de Tukey HSD")
                 tukey_df, medias = tukey_hsd(df)
+                st.markdown("### 🔍 Prueba de Tukey HSD")
                 st.dataframe(tukey_df, use_container_width=True, hide_index=True)
         
         with tab3:
@@ -1064,63 +865,57 @@ elif seccion == "📊 Modelos Experimentales":
             mostrar_interpretaciones(df, result_uni)
         
         with tab6:
-            st.subheader("📥 Exportar Resultados")
-            st.write("Descargue un archivo Excel completo con:")
-            st.write("- ✅ Datos experimentales")
-            st.write("- ✅ ANOVA Unifactorial")
-            st.write("- ✅ ANOVA Bifactorial")
-            st.write("- ✅ Prueba de Tukey HSD")
-            st.write("- ✅ Estadísticas descriptivas")
-            
-            tukey_df, _ = tukey_hsd(df) if result_uni['P_Value'] < 0.05 else (pd.DataFrame(), None)
+            tukey_df, _ = tukey_hsd(df) if result_uni['P_Value'] < alpha_custom else (pd.DataFrame(), None)
             excel_data = exportar_excel(df, result_uni, result_bif, tukey_df)
-            st.download_button("📥 Descargar Excel Completo", excel_data, 
-                             f"{titulo.lower().replace(' ', '_').replace(':', '')}.xlsx",
+            st.download_button("📥 Descargar Excel", excel_data, 
+                             f"{titulo.lower().replace(' ', '_')}.xlsx",
                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     
     if modelo_seleccionado == "Modelo 1: Balanceado":
         df = generar_datos_modelo1()
         mostrar_analisis_completo(df, "Modelo 1: DCA Balanceado", 
-                                 "📌 Estructura: 60 cuyes distribuidos equitativamente (15 cuyes por tratamiento)")
+                                 "60 cuyes (15 por tratamiento)")
     
     elif modelo_seleccionado == "Modelo 2: No Balanceado":
         df = generar_datos_modelo2()
         mostrar_analisis_completo(df, "Modelo 2: DCA No Balanceado",
-                                 "📌 Estructura: 68 cuyes con distribución desigual (T1:14, T2:18, T3:16, T4:20)")
+                                 "68 cuyes (14,18,16,20)")
     
     elif modelo_seleccionado == "Modelo 3: Bal-Bal (Sub)":
         df = generar_datos_modelo3()
-        mostrar_analisis_completo(df, "Modelo 3: Muestreo Bal-Bal con Submuestreo",
-                                 "📌 Estructura: 20 pozas (5 por tratamiento), 4 cuyes por poza = 80 cuyes")
+        mostrar_analisis_completo(df, "Modelo 3: Bal-Bal",
+                                 "20 pozas, 4 cuyes/poza")
     
     elif modelo_seleccionado == "Modelo 4: Bal-NoBal (Sub)":
         df = generar_datos_modelo4()
-        mostrar_analisis_completo(df, "Modelo 4: Muestreo Bal-NoBal con Submuestreo",
-                                 "📌 Estructura: 20 pozas (5 por tratamiento), cuyes variables por poza (T1:3, T2:4, T3:5, T4:3)")
+        mostrar_analisis_completo(df, "Modelo 4: Bal-NoBal",
+                                 "20 pozas, 3-5 cuyes/poza")
     
     elif modelo_seleccionado == "Modelo 5: NoBal-Bal (Sub)":
         df = generar_datos_modelo5()
-        mostrar_analisis_completo(df, "Modelo 5: Muestreo NoBal-Bal con Submuestreo",
-                                 "📌 Estructura: Pozas desiguales (T1:4, T2:6, T3:5, T4:7), 4 cuyes por poza = 88 cuyes")
+        mostrar_analisis_completo(df, "Modelo 5: NoBal-Bal",
+                                 "4-7 pozas, 4 cuyes/poza")
     
     elif modelo_seleccionado == "Modelo 6: NoBal-NoBal (Sub)":
         df = generar_datos_modelo6()
-        mostrar_analisis_completo(df, "Modelo 6: Muestreo Completamente Desbalanceado",
-                                 "📌 Estructura: Pozas y cuyes completamente desiguales (100 cuyes totales)")
+        mostrar_analisis_completo(df, "Modelo 6: NoBal-NoBal",
+                                 "Completamente desbalanceado")
 
-# ==================== COMPARACIÓN DE MODELOS ====================
+# ==================== SECCIÓN MIS DATOS ====================
+elif seccion == "📤 Mis Datos":
+    analizar_datos_propios()
+
+# ==================== COMPARACIÓN ====================
 elif seccion == "📈 Comparación de Modelos":
-    st.header("📈 Comparación entre Modelos Experimentales")
-    
-    st.info("Esta sección compara los resultados del ANOVA entre todos los modelos experimentales")
+    st.header("📈 Comparación entre Modelos")
     
     modelos_data = {
-        "Modelo 1\nBalanceado": generar_datos_modelo1(),
-        "Modelo 2\nNo Balanceado": generar_datos_modelo2(),
-        "Modelo 3\nBal-Bal (Sub)": generar_datos_modelo3(),
-        "Modelo 4\nBal-NoBal (Sub)": generar_datos_modelo4(),
-        "Modelo 5\nNoBal-Bal (Sub)": generar_datos_modelo5(),
-        "Modelo 6\nNoBal-NoBal (Sub)": generar_datos_modelo6()
+        "Modelo 1": generar_datos_modelo1(),
+        "Modelo 2": generar_datos_modelo2(),
+        "Modelo 3": generar_datos_modelo3(),
+        "Modelo 4": generar_datos_modelo4(),
+        "Modelo 5": generar_datos_modelo5(),
+        "Modelo 6": generar_datos_modelo6()
     }
     
     comparacion = []
@@ -1128,175 +923,43 @@ elif seccion == "📈 Comparación de Modelos":
         grupos = [df[df['Tratamiento'] == t]['Ganancia_Peso_g'].values for t in df['Tratamiento'].unique()]
         f_stat, p_value = stats.f_oneway(*grupos)
         
-        # Media general
-        media_general = df['Ganancia_Peso_g'].mean()
-        
         comparacion.append({
-            'Modelo': nombre.replace('\n', ' '),
+            'Modelo': nombre,
             'n Total': len(df),
-            'Media General': round(media_general, 1),
-            'F-statistic': round(f_stat, 4),
+            'Media General': round(df['Ganancia_Peso_g'].mean(), 1),
+            'F': round(f_stat, 4),
             'P-valor': round(p_value, 6),
-            'Significativo': 'Sí ✓' if p_value < 0.05 else 'No ✗'
+            'Significativo': 'Sí ✓' if p_value < alpha_custom else 'No ✗'
         })
     
     comp_df = pd.DataFrame(comparacion)
-    
-    st.markdown("### 📊 Tabla Comparativa de Resultados")
     st.dataframe(comp_df, use_container_width=True, hide_index=True)
     
-    # Análisis comparativo
-    st.markdown("### 📈 Análisis Comparativo")
-    
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### Estadísticos F por Modelo")
-        fig1 = px.bar(comp_df, x='Modelo', y='F-statistic', 
-                     title='Comparación de Estadísticos F entre Modelos',
+        fig1 = px.bar(comp_df, x='Modelo', y='F', 
+                     title='Comparación de Estadísticos F',
                      color='Significativo',
-                     labels={'F-statistic': 'Valor F'},
                      color_discrete_map={'Sí ✓': '#28a745', 'No ✗': '#dc3545'})
-        fig1.update_layout(height=450, xaxis_tickangle=-45)
+        fig1.update_layout(height=450)
         st.plotly_chart(fig1, use_container_width=True)
-        
-        st.markdown("""
-        **Interpretación:**
-        - Valores F más altos indican mayor diferencia entre tratamientos
-        - Modelos en verde tienen diferencias significativas (p < 0.05)
-        - Modelos en rojo no detectaron diferencias significativas
-        """)
     
     with col2:
-        st.markdown("#### P-valores vs Tamaño Muestral")
         fig2 = px.scatter(comp_df, x='n Total', y='P-valor',
-                         title='Relación entre Tamaño Muestral y P-valor',
+                         title='P-valor vs Tamaño Muestral',
                          color='Significativo',
-                         size='F-statistic',
-                         hover_data=['Modelo'],
+                         size='F',
                          color_discrete_map={'Sí ✓': '#28a745', 'No ✗': '#dc3545'})
-        fig2.add_hline(y=0.05, line_dash="dash", line_color="red", 
-                      annotation_text="α = 0.05")
+        fig2.add_hline(y=alpha_custom, line_dash="dash", line_color="red")
         fig2.update_layout(height=450)
         st.plotly_chart(fig2, use_container_width=True)
-        
-        st.markdown("""
-        **Interpretación:**
-        - La línea roja representa el umbral de significancia (α = 0.05)
-        - Puntos debajo de la línea tienen diferencias significativas
-        - El tamaño de los puntos representa la magnitud del estadístico F
-        """)
-    
-    # Resumen ejecutivo
-    st.markdown("### 📋 Resumen Ejecutivo")
-    
-    n_significativos = comp_df[comp_df['Significativo'] == 'Sí ✓'].shape[0]
-    mejor_f = comp_df.loc[comp_df['F-statistic'].idxmax()]
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("Modelos Significativos", f"{n_significativos}/6")
-    
-    with col2:
-        st.metric("Mejor F-statistic", f"{mejor_f['F-statistic']:.4f}")
-    
-    with col3:
-        st.metric("Modelo con Mayor F", mejor_f['Modelo'])
-    
-    st.markdown("---")
-    
-    # Comparación de medias por tratamiento
-    st.markdown("### 🎯 Comparación de Medias por Tratamiento")
-    
-    medias_comparacion = []
-    for nombre, df in modelos_data.items():
-        medias_trat = df.groupby('Tratamiento')['Ganancia_Peso_g'].mean()
-        for trat in medias_trat.index:
-            medias_comparacion.append({
-                'Modelo': nombre.replace('\n', ' '),
-                'Tratamiento': trat,
-                'Media': medias_trat[trat]
-            })
-    
-    medias_df = pd.DataFrame(medias_comparacion)
-    
-    fig3 = px.line(medias_df, x='Tratamiento', y='Media', color='Modelo',
-                   title='Medias de Ganancia de Peso por Tratamiento en Cada Modelo',
-                   labels={'Media': 'Ganancia de Peso (g)'},
-                   markers=True)
-    fig3.update_layout(height=500)
-    st.plotly_chart(fig3, use_container_width=True)
-    
-    st.markdown("""
-    **📌 Interpretación:**
-    - Este gráfico muestra cómo varían las medias entre modelos
-    - Cada línea representa un modelo experimental diferente
-    - Permite identificar consistencia de resultados entre modelos
-    - Tratamientos con líneas paralelas indican efectos consistentes
-    """)
-    
-    # Tabla de medias detallada
-    st.markdown("### 📊 Tabla Detallada de Medias por Tratamiento y Modelo")
-    medias_pivot = medias_df.pivot_table(values='Media', 
-                                         index='Tratamiento', 
-                                         columns='Modelo')
-    st.dataframe(medias_pivot.round(2), use_container_width=True)
-    
-    # Conclusiones
-    st.markdown("### 💡 Conclusiones de la Comparación")
-    
-    if n_significativos >= 4:
-        st.success(f"""
-        ✅ **Resultados Robustos:**
-        - {n_significativos} de 6 modelos mostraron diferencias significativas
-        - Esto indica que los efectos de los tratamientos son consistentes
-        - Los resultados son confiables independientemente del diseño usado
-        """)
-    elif n_significativos >= 2:
-        st.info(f"""
-        ℹ️ **Resultados Moderados:**
-        - {n_significativos} de 6 modelos mostraron diferencias significativas
-        - La detección de efectos puede depender del diseño experimental
-        - Se recomienda enfocarse en los modelos con mayor poder estadístico
-        """)
-    else:
-        st.warning(f"""
-        ⚠️ **Resultados Limitados:**
-        - Solo {n_significativos} modelo(s) mostraron diferencias significativas
-        - Los efectos de los tratamientos pueden ser pequeños
-        - Se recomienda aumentar tamaños muestrales o duración del experimento
-        """)
-    
-    # Recomendaciones
-    st.markdown("### 🎯 Recomendaciones Metodológicas")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("#### 📊 Para Futuros Experimentos:")
-        st.write("""
-        1. **Diseño balanceado** (Modelo 1) ofrece mayor poder estadístico
-        2. **Submuestreo** (Modelos 3-6) es útil cuando hay estructuras jerárquicas
-        3. El tamaño muestral influye directamente en la capacidad de detección
-        4. Considerar costos vs beneficios de cada diseño
-        """)
-    
-    with col2:
-        st.markdown("#### 🔬 Análisis de Resultados:")
-        st.write("""
-        1. Verificar consistencia de resultados entre modelos
-        2. Priorizar modelos con diseños más robustos
-        3. Interpretar con cautela resultados no significativos
-        4. Complementar con análisis económico
-        """)
 
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style='text-align: center; color: #666; padding: 10px;'>
-    <p><b>Desarrollado para análisis estadístico de diseños experimentales en producción animal</b> 🐹</p>
+<div style='text-align: center; color: #666;'>
     <p>Dina Maribel Yana Yucra | Código: 221086</p>
-    <p style='font-size: 12px; color: #999;'>Aplicación Streamlit - Análisis Estadístico Completo</p>
+    <p style='font-size: 12px;'>Aplicación Streamlit - Análisis Estadístico DCA</p>
 </div>
 """, unsafe_allow_html=True)
