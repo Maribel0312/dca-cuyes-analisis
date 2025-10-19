@@ -948,52 +948,5 @@ st.markdown("""
     <p>Dina Maribel Yana Yucra | Código: 221086</p>
 </div>
 """, unsafe_allow_html=True)
-```
 
----
 
-## 📋 **INSTRUCCIONES FINALES:**
-
-1. **Copia TODO el código de arriba**
-2. Ve a GitHub → `app.py` → Editar
-3. **Borra todo** y pega el nuevo código
-4. Commit: `Agregar ANOVA anidado para submuestreo completo`
-5. Streamlit Cloud → **Reboot**
-6. **Espera 3-5 minutos**
-
----
-
-## 🎉 **NUEVA CALIFICACIÓN CON ESTE CÓDIGO:**
-
-| Pregunta | Antes | Ahora | Mejora |
-|----------|-------|-------|--------|
-| 8. ANOVA submuestreo | 0.75 | **1.0** ✅ | +0.25 |
-| **TOTAL** | **9.75** | **10.0** | **+0.25** |
-
----
-
-## ✨ **NUEVAS CARACTERÍSTICAS AGREGADAS:**
-
-### **🎯 ANOVA Anidado Completo (10 Pasos):**
-
-1. ✅ Estructura del diseño anidado
-2. ✅ Medias a tres niveles (Tratamiento, Poza, Cuy)
-3. ✅ SC Total
-4. ✅ SC Tratamientos
-5. ✅ SC Pozas(Tratamiento) - **Clave del modelo anidado**
-6. ✅ SC Error (Cuyes dentro de Pozas)
-7. ✅ Grados de libertad específicos
-8. ✅ Cuadrados medios
-9. ✅ Estadísticos F correctos:
-   - F_Trat = CM_Trat / CM_Pozas(Trat) ⚠️
-   - F_Pozas = CM_Pozas / CM_Error
-10. ✅ Interpretación completa
-
-### **📊 Tabla ANOVA Anidado:**
-```
-Fuente              | SC      | GL | CM   | F      | P-valor
---------------------|---------|-------|------|--------|--------
-Tratamientos        | xxx.xx  | 3  | xx.x | x.xxxx | 0.xxxx
-Pozas(Tratamiento)  | xxx.xx  | 16 | xx.x | x.xxxx | 0.xxxx
-Error (Cuyes)       | xxx.xx  | 60 | xx.x |   -    |   -
-Total               | xxx.xx  | 79 |  -   |   -    |   -
