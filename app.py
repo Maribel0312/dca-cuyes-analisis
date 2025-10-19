@@ -1093,3 +1093,540 @@ if seccion == "🏠 Inicio":
     evaluar la variabilidad entre unidades experimentales (pozas) y dentro de ellas (cuyes individuales), 
     proporcionando un análisis más completo de las fuentes de variación.
     """)
+
+elif seccion == "📚 Teoría":
+    st.header("📚 Marco Teórico - Diseño Completamente al Azar")
+    
+    st.markdown("""
+    El **Diseño Completamente al Azar (DCA)** es uno de los diseños experimentales más simples 
+    y utilizados cuando las unidades experimentales son homogéneas y se pueden asignar aleatoriamente 
+    a los tratamientos.
+    """)
+    
+    # ANOVA UNIFACTORIAL
+    st.markdown("---")
+    st.markdown("## 1️⃣ ANOVA Unifactorial (Un Factor)")
+    
+    st.markdown("""
+    ### Modelo Estadístico
+    
+    El modelo lineal para un DCA unifactorial es:
+    """)
+    
+    st.latex(r"Y_{ij} = \mu + \tau_i + \varepsilon_{ij}")
+    
+    st.markdown("""
+    **Donde:**
+    - $Y_{ij}$ = Observación j-ésima del tratamiento i-ésimo
+    - $\mu$ = Media general poblacional
+    - $\tau_i$ = Efecto del i-ésimo tratamiento ($i = 1, 2, ..., t$)
+    - $\varepsilon_{ij}$ = Error aleatorio ($j = 1, 2, ..., n_i$)
+    
+    **Supuestos:**
+    - $\varepsilon_{ij} \sim N(0, \sigma^2)$ (normalidad)
+    - $Var(\varepsilon_{ij}) = \sigma^2$ (homocedasticidad)
+    - Errores independientes
+    """)
+    
+    st.markdown("### Hipótesis Estadísticas")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("**Hipótesis Nula:**")
+        st.latex(r"H_0: \tau_1 = \tau_2 = ... = \tau_t = 0")
+        st.caption("Todos los tratamientos tienen el mismo efecto")
+    
+    with col2:
+        st.markdown("**Hipótesis Alternativa:**")
+        st.latex(r"H_1: \exists \, i,j \, / \, \tau_i \neq \tau_j")
+        st.caption("Al menos un tratamiento difiere")
+    
+    st.markdown("### Fórmulas de Cálculo")
+    
+    st.markdown("#### 1. Media General")
+    st.latex(r"\bar{Y}_{..} = \frac{1}{N}\sum_{i=1}^{t}\sum_{j=1}^{n_i}Y_{ij}")
+    st.caption("N = número total de observaciones")
+    
+    st.markdown("#### 2. Suma de Cuadrados Total (SCT)")
+    st.latex(r"SCT = \sum_{i=1}^{t}\sum_{j=1}^{n_i}(Y_{ij} - \bar{Y}_{..})^2")
+    st.caption("Mide la variabilidad total de los datos")
+    
+    st.markdown("#### 3. Suma de Cuadrados de Tratamientos (SC Trat)")
+    st.latex(r"SC_{Trat} = \sum_{i=1}^{t}n_i(\bar{Y}_{i.} - \bar{Y}_{..})^2")
+    st.caption("Variabilidad debida a diferencias entre tratamientos")
+    
+    st.markdown("#### 4. Suma de Cuadrados del Error (SC Error)")
+    st.latex(r"SC_{Error} = \sum_{i=1}^{t}\sum_{j=1}^{n_i}(Y_{ij} - \bar{Y}_{i.})^2")
+    st.caption("Variabilidad dentro de cada tratamiento")
+    
+    st.info(r"**Identidad fundamental:** $SCT = SC_{Trat} + SC_{Error}$")
+    
+    st.markdown("#### 5. Grados de Libertad")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.latex(r"gl_{Trat} = t - 1")
+        st.caption("t = número de tratamientos")
+    
+    with col2:
+        st.latex(r"gl_{Error} = N - t")
+        st.caption("N = total de observaciones")
+    
+    with col3:
+        st.latex(r"gl_{Total} = N - 1")
+    
+    st.markdown("#### 6. Cuadrados Medios")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.latex(r"CM_{Trat} = \frac{SC_{Trat}}{gl_{Trat}}")
+        st.caption("Varianza entre tratamientos")
+    
+    with col2:
+        st.latex(r"CM_{Error} = \frac{SC_{Error}}{gl_{Error}}")
+        st.caption("Varianza dentro de tratamientos")
+    
+    st.markdown("#### 7. Estadístico F")
+    st.latex(r"F_{calc} = \frac{CM_{Trat}}{CM_{Error}}")
+    st.caption(r"Bajo $H_0$: $F_{calc} \sim F_{(t-1, N-t)}$")
+    
+    st.markdown("#### 8. Regla de Decisión")
+    st.markdown(r"""
+    - Si $F_{calc} > F_{crítico}$ o $p\text{-valor} < \alpha$: Rechazar $H_0$
+    - Si $F_{calc} \leq F_{crítico}$ o $p\text{-valor} \geq \alpha$: No rechazar $H_0$
+    """)
+    
+    # ANOVA BIFACTORIAL
+    st.markdown("---")
+    st.markdown("## 2️⃣ ANOVA Bifactorial (Dos Factores)")
+    
+    st.markdown("""
+    ### Modelo Estadístico
+    
+    Cuando se evalúan simultáneamente dos factores:
+    """)
+    
+    st.latex(r"Y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \varepsilon_{ijk}")
+    
+    st.markdown("""
+    **Donde:**
+    - $Y_{ijk}$ = Observación k en el nivel i del Factor A y nivel j del Factor B
+    - $\mu$ = Media general
+    - $\alpha_i$ = Efecto del nivel i del Factor A
+    - $\beta_j$ = Efecto del nivel j del Factor B
+    - $(\alpha\beta)_{ij}$ = Efecto de interacción entre factores
+    - $\varepsilon_{ijk}$ = Error aleatorio
+    """)
+    
+    st.markdown("### Hipótesis a Evaluar")
+    
+    st.markdown("**Para el Factor A:**")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.latex(r"H_0: \alpha_1 = \alpha_2 = ... = \alpha_a = 0")
+    with col2:
+        st.latex(r"H_1: \exists \, i \, / \, \alpha_i \neq 0")
+    
+    st.markdown("**Para el Factor B:**")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.latex(r"H_0: \beta_1 = \beta_2 = ... = \beta_b = 0")
+    with col2:
+        st.latex(r"H_1: \exists \, j \, / \, \beta_j \neq 0")
+    
+    st.markdown("**Para la Interacción AB:**")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.latex(r"H_0: (\alpha\beta)_{ij} = 0 \, \forall \, i,j")
+    with col2:
+        st.latex(r"H_1: \exists \, (i,j) \, / \, (\alpha\beta)_{ij} \neq 0")
+    
+    st.markdown("### Fórmulas de Cálculo")
+    
+    st.markdown("#### 1. Sumas de Cuadrados")
+    
+    st.markdown("**SC Total:**")
+    st.latex(r"SCT = \sum_{i=1}^{a}\sum_{j=1}^{b}\sum_{k=1}^{n_{ij}}(Y_{ijk} - \bar{Y}_{...})^2")
+    
+    st.markdown("**SC Factor A:**")
+    st.latex(r"SC_A = bn\sum_{i=1}^{a}(\bar{Y}_{i..} - \bar{Y}_{...})^2")
+    
+    st.markdown("**SC Factor B:**")
+    st.latex(r"SC_B = an\sum_{j=1}^{b}(\bar{Y}_{.j.} - \bar{Y}_{...})^2")
+    
+    st.markdown("**SC Interacción AB:**")
+    st.latex(r"SC_{AB} = n\sum_{i=1}^{a}\sum_{j=1}^{b}(\bar{Y}_{ij.} - \bar{Y}_{i..} - \bar{Y}_{.j.} + \bar{Y}_{...})^2")
+    
+    st.markdown("**SC Error:**")
+    st.latex(r"SC_{Error} = \sum_{i=1}^{a}\sum_{j=1}^{b}\sum_{k=1}^{n_{ij}}(Y_{ijk} - \bar{Y}_{ij.})^2")
+    
+    st.info(r"**Identidad:** $SCT = SC_A + SC_B + SC_{AB} + SC_{Error}$")
+    
+    st.markdown("#### 2. Grados de Libertad")
+    
+    tabla_gl = pd.DataFrame({
+        'Fuente': ['Factor A', 'Factor B', 'Interacción AB', 'Error', 'Total'],
+        'GL': ['a - 1', 'b - 1', '(a-1)(b-1)', 'ab(n-1)', 'abn - 1']
+    })
+    st.dataframe(tabla_gl, hide_index=True, use_container_width=True)
+    
+    st.markdown("#### 3. Cuadrados Medios y Estadísticos F")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("**Factor A:**")
+        st.latex(r"CM_A = \frac{SC_A}{a-1}")
+        st.latex(r"F_A = \frac{CM_A}{CM_{Error}}")
+    
+    with col2:
+        st.markdown("**Factor B:**")
+        st.latex(r"CM_B = \frac{SC_B}{b-1}")
+        st.latex(r"F_B = \frac{CM_B}{CM_{Error}}")
+    
+    with col3:
+        st.markdown("**Interacción:**")
+        st.latex(r"CM_{AB} = \frac{SC_{AB}}{(a-1)(b-1)}")
+        st.latex(r"F_{AB} = \frac{CM_{AB}}{CM_{Error}}")
+    
+    # ANOVA CON SUBMUESTREO (ANIDADO)
+    st.markdown("---")
+    st.markdown("## 3️⃣ ANOVA con Submuestreo (Modelo Anidado)")
+    
+    st.markdown("""
+    ### Modelo Estadístico
+    
+    Cuando hay submuestreo (ej: pozas dentro de tratamientos, cuyes dentro de pozas):
+    """)
+    
+    st.latex(r"Y_{ijk} = \mu + \tau_i + \beta_{j(i)} + \varepsilon_{ijk}")
+    
+    st.markdown("""
+    **Donde:**
+    - $Y_{ijk}$ = Observación k en la subunidad j del tratamiento i
+    - $\mu$ = Media general poblacional
+    - $\tau_i$ = Efecto del tratamiento i ($i = 1, 2, ..., t$)
+    - $\beta_{j(i)}$ = Efecto de la subunidad j anidada en tratamiento i ($j = 1, 2, ..., n_i$)
+    - $\varepsilon_{ijk}$ = Error experimental ($k = 1, 2, ..., m_{ij}$)
+    
+    **Nota:** La notación $\beta_{j(i)}$ indica que el factor subunidad está anidado dentro del factor tratamiento.
+    """)
+    
+    st.markdown("### Estructura Jerárquica")
+    
+    st.info("""
+    **Niveles de variación:**
+    1. **Entre Tratamientos:** Diferencias entre tipos de dieta
+    2. **Entre Subunidades (Pozas) dentro de Tratamientos:** Variabilidad entre pozas del mismo tratamiento
+    3. **Dentro de Subunidades (Cuyes):** Variabilidad entre individuos de la misma poza
+    """)
+    
+    st.markdown("### Hipótesis")
+    
+    st.markdown("**Para Tratamientos:**")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.latex(r"H_0: \tau_1 = \tau_2 = ... = \tau_t = 0")
+    with col2:
+        st.markdown("No hay efecto de tratamientos")
+    
+    st.markdown("**Para Subunidades (Pozas):**")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.latex(r"H_0: \sigma^2_{\beta} = 0")
+    with col2:
+        st.markdown("No hay variabilidad entre pozas")
+    
+    st.markdown("### Fórmulas de Cálculo")
+    
+    st.markdown("#### 1. Medias en Diferentes Niveles")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("**Media General:**")
+        st.latex(r"\bar{Y}_{...} = \frac{\sum\sum\sum Y_{ijk}}{N}")
+    
+    with col2:
+        st.markdown("**Media Tratamiento i:**")
+        st.latex(r"\bar{Y}_{i..} = \frac{\sum\sum Y_{ijk}}{n_i m_i}")
+    
+    with col3:
+        st.markdown("**Media Subunidad j en i:**")
+        st.latex(r"\bar{Y}_{ij.} = \frac{\sum Y_{ijk}}{m_{ij}}")
+    
+    st.markdown("#### 2. Sumas de Cuadrados")
+    
+    st.markdown("**SC Total:**")
+    st.latex(r"SCT = \sum_{i=1}^{t}\sum_{j=1}^{n_i}\sum_{k=1}^{m_{ij}}(Y_{ijk} - \bar{Y}_{...})^2")
+    
+    st.markdown("**SC Tratamientos:**")
+    st.latex(r"SC_{Trat} = \sum_{i=1}^{t}\sum_{j=1}^{n_i}\sum_{k=1}^{m_{ij}}(\bar{Y}_{i..} - \bar{Y}_{...})^2")
+    st.caption("Variabilidad entre tratamientos")
+    
+    st.markdown("**SC Subunidades (Pozas) dentro de Tratamientos:**")
+    st.latex(r"SC_{Sub(Trat)} = \sum_{i=1}^{t}\sum_{j=1}^{n_i}\sum_{k=1}^{m_{ij}}(\bar{Y}_{ij.} - \bar{Y}_{i..})^2")
+    st.caption("Variabilidad entre pozas del mismo tratamiento")
+    
+    st.markdown("**SC Error (Cuyes dentro de Pozas):**")
+    st.latex(r"SC_{Error} = \sum_{i=1}^{t}\sum_{j=1}^{n_i}\sum_{k=1}^{m_{ij}}(Y_{ijk} - \bar{Y}_{ij.})^2")
+    st.caption("Variabilidad entre cuyes de la misma poza")
+    
+    st.info(r"**Identidad:** $SCT = SC_{Trat} + SC_{Sub(Trat)} + SC_{Error}$")
+    
+    st.markdown("#### 3. Grados de Libertad")
+    
+    tabla_gl_sub = pd.DataFrame({
+        'Fuente': ['Tratamientos', 'Subunidades(Trat)', 'Error', 'Total'],
+        'GL': ['t - 1', 'Σ(nᵢ - 1)', 'Σ Σ(mᵢⱼ - 1)', 'N - 1'],
+        'Descripción': [
+            'Número de tratamientos menos 1',
+            'Suma de pozas por tratamiento menos número de tratamientos',
+            'Total de observaciones menos total de pozas',
+            'Total de observaciones menos 1'
+        ]
+    })
+    st.dataframe(tabla_gl_sub, hide_index=True, use_container_width=True)
+    
+    st.markdown("#### 4. Cuadrados Medios")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("**CM Tratamientos:**")
+        st.latex(r"CM_{Trat} = \frac{SC_{Trat}}{t-1}")
+    
+    with col2:
+        st.markdown("**CM Subunidades:**")
+        st.latex(r"CM_{Sub(Trat)} = \frac{SC_{Sub(Trat)}}{\sum(n_i-1)}")
+    
+    with col3:
+        st.markdown("**CM Error:**")
+        st.latex(r"CM_{Error} = \frac{SC_{Error}}{\sum\sum(m_{ij}-1)}")
+    
+    st.markdown("#### 5. Estadísticos F")
+    
+    st.warning("""
+    **⚠️ IMPORTANTE en Modelos Anidados:**
+    
+    La estructura de las pruebas F es diferente al ANOVA simple:
+    """)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("**Para Tratamientos:**")
+        st.latex(r"F_{Trat} = \frac{CM_{Trat}}{CM_{Sub(Trat)}}")
+        st.caption("⚠️ Se usa CM_Sub(Trat) como denominador, NO CM_Error")
+        st.latex(r"F_{Trat} \sim F_{(t-1, \sum(n_i-1))}")
+    
+    with col2:
+        st.markdown("**Para Subunidades:**")
+        st.latex(r"F_{Sub(Trat)} = \frac{CM_{Sub(Trat)}}{CM_{Error}}")
+        st.caption("Se usa CM_Error como denominador")
+        st.latex(r"F_{Sub(Trat)} \sim F_{(\sum(n_i-1), \sum\sum(m_{ij}-1))}")
+    
+    st.markdown("#### 6. Interpretación de Resultados")
+    
+    st.markdown("""
+    **Si $F_{Trat}$ es significativo:**
+    - Existen diferencias reales entre tratamientos
+    - Se recomienda realizar comparaciones múltiples (Tukey, Duncan, etc.)
+    
+    **Si $F_{Sub(Trat)}$ es significativo:**
+    - Existe variabilidad importante entre pozas del mismo tratamiento
+    - El diseño con submuestreo fue necesario y apropiado
+    - Las condiciones dentro de tratamientos no son homogéneas
+    
+    **Si $F_{Sub(Trat)}$ NO es significativo:**
+    - Poca variabilidad entre pozas del mismo tratamiento
+    - Las condiciones dentro de tratamientos son homogéneas
+    - Un diseño sin submuestreo habría sido suficiente
+    """)
+    
+    st.markdown("---")
+    st.markdown("## 📊 Comparaciones Múltiples - Prueba de Tukey (HSD)")
+    
+    st.markdown("""
+    Cuando el ANOVA indica diferencias significativas, se utiliza la prueba de Tukey 
+    para determinar **qué pares de tratamientos difieren**.
+    """)
+    
+    st.markdown("### Estadístico de Tukey")
+    st.latex(r"HSD = q_{\alpha, t, gl_{error}} \times \sqrt{\frac{CM_{Error}}{n}}")
+    
+    st.markdown("""
+    **Donde:**
+    - $HSD$ = Diferencia Honestamente Significativa (Honestly Significant Difference)
+    - $q_{\alpha, t, gl_{error}}$ = Valor crítico del rango estudentizado
+    - $CM_{Error}$ = Cuadrado medio del error
+    - $n$ = Número de repeticiones por tratamiento (para diseños balanceados)
+    
+    **Regla de decisión:**
+    - Si $|\bar{Y}_i - \bar{Y}_j| > HSD$: Los tratamientos i y j son significativamente diferentes
+    - Si $|\bar{Y}_i - \bar{Y}_j| \leq HSD$: No hay diferencia significativa
+    """)
+    
+    st.markdown("### Para Diseños No Balanceados")
+    
+    st.markdown("Se utiliza la media armónica:")
+    st.latex(r"n_{harmonica} = \frac{2}{\frac{1}{n_i} + \frac{1}{n_j}}")
+    
+    st.markdown("---")
+    st.success("""
+    💡 **Resumen de Selección de Análisis:**
+    
+    - **ANOVA Unifactorial:** Un solo factor de interés (tipo de dieta)
+    - **ANOVA Bifactorial:** Dos factores simultáneos (dieta + sexo, por ejemplo)
+    - **ANOVA Anidado:** Estructura jerárquica con submuestreo (dieta → poza → cuy)
+    """)
+
+elif seccion == "📊 Modelos Experimentales":
+    
+    def mostrar_analisis_completo(df, titulo, descripcion, tiene_submuestreo=False):
+        st.header(titulo)
+        st.info(descripcion)
+        
+        if tiene_submuestreo:
+            tabs = st.tabs(["📊 Datos", "🔬 Supuestos", "🔢 ANOVA Unifactorial", "🎯 ANOVA Submuestreo", 
+                           "🔢 ANOVA Bifactorial", "📈 Gráficos", "💡 Recomendaciones", "📥 Exportar"])
+        else:
+            tabs = st.tabs(["📊 Datos", "🔬 Supuestos", "🔢 ANOVA Unifactorial", "🔢 ANOVA Bifactorial", 
+                           "📈 Gráficos", "💡 Recomendaciones", "📥 Exportar"])
+        
+        with tabs[0]:
+            st.dataframe(df, use_container_width=True, height=400)
+            
+            # Resumen estadístico
+            st.markdown("### 📋 Resumen Estadístico por Tratamiento")
+            resumen = df.groupby('Tratamiento')['Ganancia_Peso_g'].agg([
+                ('n', 'count'),
+                ('Media', 'mean'),
+                ('Mediana', 'median'),
+                ('Desv.Est', 'std'),
+                ('Mín', 'min'),
+                ('Máx', 'max')
+            ]).round(2)
+            st.dataframe(resumen, use_container_width=True)
+        
+        with tabs[1]:
+            supuestos = pruebas_supuestos(df)
+        
+        with tabs[2]:
+            result_uni = calcular_anova_unifactorial_pasos(df)
+            st.markdown("---")
+            mostrar_tabla_anova_unifactorial(result_uni)
+            
+            if result_uni['P_Value'] < alpha_custom:
+                st.markdown("---")
+                tukey_df, _ = tukey_hsd(df)
+                st.markdown("### 🔍 Tukey HSD")
+                st.dataframe(tukey_df, use_container_width=True, hide_index=True)
+        
+        if tiene_submuestreo:
+            with tabs[3]:
+                result_sub = calcular_anova_submuestreo_pasos(df)
+                st.markdown("---")
+                mostrar_tabla_anova_anidado(result_sub)
+            
+            with tabs[4]:
+                result_bif = calcular_anova_bifactorial_pasos(df)
+                st.markdown("---")
+                mostrar_tabla_anova_bifactorial(result_bif)
+            
+            with tabs[5]:
+                crear_graficos(df, result_uni)
+            
+            with tabs[6]:
+                mostrar_interpretaciones_y_recomendaciones(df, result_uni, supuestos)
+            
+            with tabs[7]:
+                tukey_df, _ = tukey_hsd(df) if result_uni['P_Value'] < alpha_custom else (pd.DataFrame(), None)
+                excel_data = exportar_excel(df, result_uni, result_sub, tukey_df, supuestos)
+                st.download_button("📥 Descargar Análisis Completo (Excel)", excel_data, 
+                                 f"{titulo.lower().replace(' ', '_').replace(':', '')}.xlsx",
+                                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                 type="primary")
+        else:
+            with tabs[3]:
+                result_bif = calcular_anova_bifactorial_pasos(df)
+                st.markdown("---")
+                mostrar_tabla_anova_bifactorial(result_bif)
+            
+            with tabs[4]:
+                crear_graficos(df, result_uni)
+            
+            with tabs[5]:
+                mostrar_interpretaciones_y_recomendaciones(df, result_uni, supuestos)
+            
+            with tabs[6]:
+                tukey_df, _ = tukey_hsd(df) if result_uni['P_Value'] < alpha_custom else (pd.DataFrame(), None)
+                excel_data = exportar_excel(df, result_uni, {}, tukey_df, supuestos)
+                st.download_button("📥 Descargar Análisis Completo (Excel)", excel_data, 
+                                 f"{titulo.lower().replace(' ', '_').replace(':', '')}.xlsx",
+                                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                 type="primary")
+    
+    if modelo_seleccionado == "Modelo 1: Balanceado":
+        df = generar_datos_modelo1()
+        mostrar_analisis_completo(df, "Modelo 1: Balanceado", "60 cuyes (15/trat)")
+    
+    elif modelo_seleccionado == "Modelo 2: No Balanceado":
+        df = generar_datos_modelo2()
+        mostrar_analisis_completo(df, "Modelo 2: No Balanceado", "68 cuyes (14,18,16,20)")
+    
+    elif modelo_seleccionado == "Modelo 3: Bal-Bal (Sub)":
+        df = generar_datos_modelo3()
+        mostrar_analisis_completo(df, "Modelo 3: Bal-Bal", "20 pozas, 4 cuyes/poza", tiene_submuestreo=True)
+    
+    elif modelo_seleccionado == "Modelo 4: Bal-NoBal (Sub)":
+        df = generar_datos_modelo4()
+        mostrar_analisis_completo(df, "Modelo 4: Bal-NoBal", "20 pozas, 3-5 cuyes/poza", tiene_submuestreo=True)
+    
+    elif modelo_seleccionado == "Modelo 5: NoBal-Bal (Sub)":
+        df = generar_datos_modelo5()
+        mostrar_analisis_completo(df, "Modelo 5: NoBal-Bal", "4-7 pozas, 4 cuyes/poza", tiene_submuestreo=True)
+    
+    elif modelo_seleccionado == "Modelo 6: NoBal-NoBal (Sub)":
+        df = generar_datos_modelo6()
+        mostrar_analisis_completo(df, "Modelo 6: NoBal-NoBal", "Completamente desbalanceado", tiene_submuestreo=True)
+
+elif seccion == "📤 Mis Datos":
+    analizar_datos_propios()
+
+elif seccion == "📈 Comparación de Modelos":
+    st.header("📈 Comparación entre Modelos")
+    
+    modelos_data = {
+        "M1": generar_datos_modelo1(),
+        "M2": generar_datos_modelo2(),
+        "M3": generar_datos_modelo3(),
+        "M4": generar_datos_modelo4(),
+        "M5": generar_datos_modelo5(),
+        "M6": generar_datos_modelo6()
+    }
+    
+    comparacion = []
+    for nombre, df in modelos_data.items():
+        grupos = [df[df['Tratamiento'] == t]['Ganancia_Peso_g'].values for t in df['Tratamiento'].unique()]
+        f_stat, p_value = stats.f_oneway(*grupos)
+        
+        comparacion.append({
+            'Modelo': nombre,
+            'n': len(df),
+            'F': round(f_stat, 4),
+            'P-valor': round(p_value, 6),
+            'Sig': 'Sí ✓' if p_value < alpha_custom else 'No ✗'
+        })
+    
+    st.dataframe(pd.DataFrame(comparacion), use_container_width=True, hide_index=True)
+
+# Footer
+st.markdown("---")
+st.markdown("""
+<div style='text-align: center; color: #666;'>
+    <p>Dina Maribel Yana Yucra | Código: 221086</p>
+</div>
+""", unsafe_allow_html=True)
